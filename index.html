@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorry!</title>
+<style>
+body {
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+}
+
+#message {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+button {
+  padding: 15px 30px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+#myImage {
+  display: none;
+  margin-top: 20px;
+  max-width: 100%;
+  height: auto;
+}
+
+#loadingIndicator {
+  display: none;
+  margin-top: 10px;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 10px;
+    background-color: #4CAF50;
+    margin-top: 5px;
+}
+
+#streakMessage {
+  display: none;
+  margin-top: 10px;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 id="message" aria-live="assertive">Sorry!</h1>
+  <button onclick="changeColors()" aria-label="Change Background Color">Change Colors</button>
+  <button onclick="changeMessage()" aria-label="Change Message and Play Audio">Change Message</button>
+  <img id="myImage" src="streak.gif" alt="Sorry Image" aria-hidden="true">
+  <audio id="myAudio" src="loverman.mp3" preload="auto"></audio>
+  <div id="loadingIndicator">Loading audio...</div>
+  <div id="progress-bar"></div>
+  <p id="streakMessage">Thank you for the 109 streak!</p>
+</div>
+
+<script>
+const messages = [
+    "So sorry!", 
+    "My deepest apologies.", 
+    "Please accept my sincere apologies.", 
+    "I am truly sorry.",
+    "I know you loaded internet data for me just to keep the streak alive. You worked hard and suffered through spending money for TikTok load. I am really sorry."
+  ];
+let messageIndex = 0;
+
+function changeColors() {
+  document.body.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+}
+
+function changeMessage() {
+  const audio = document.getElementById("myAudio");
+  const img = document.getElementById("myImage");
+  const messageElement = document.getElementById("message");
+  const loadingIndicator = document.getElementById("loadingIndicator");
+  const progressBar = document.getElementById("progress-bar");
+  const streakMessage = document.getElementById("streakMessage");
+
+  loadingIndicator.style.display = "block";
+  progressBar.style.display = "block";
+
+  audio.play();
+  img.style.display = "block";
+
+  if (messageIndex === 0) { 
+    streakMessage.style.display = "block";
+  }
+
+  messageElement.textContent = messages[messageIndex];
+  messageIndex = (messageIndex + 1) % messages.length;
+
+  audio.ontimeupdate = function() {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = percent + "%";
+    if (percent === 100) {
+        loadingIndicator.style.display="none";
+        progressBar.style.display = "none";
+    }
+  };
+
+  audio.onerror = () => {
+    console.error("Audio loading failed.");
+    loadingIndicator.style.display = "none";
+    progressBar.style.display = "none";
+  };
+  img.onerror = () => {
+    console.error("Image loading failed.");
+    loadingIndicator.style.display = "none";
+    progressBar.style.display = "none";
+  };
+}
+</script>
+
+</body>
+</html>
